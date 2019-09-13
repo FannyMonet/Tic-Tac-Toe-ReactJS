@@ -14,35 +14,18 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
-	state={
-		currentPlayer: 'X',
-		squares: Array(9).fill(null)
-	}
-	handleClick(i) {
-		if(this.state.squares[i]!==null)
-			return null;
-		const squares = this.state.squares;
-		squares[i] = this.state.currentPlayer;
-		this.setState(prevState => ({
-			currentPlayer: prevState.currentPlayer==='X' ? 'O' : 'X',
-			squares: squares
-		}));
-	}
 	renderSquare(i) {
 		return (
 			<Square 
-				value={this.state.squares[i]} 
-				onClick={() => this.handleClick(i)}
+				value={this.props.squares[i]} 
+				onClick={() => this.props.handleClick(i)}
 			/>
 		);
 	}
 
 	render() {
-		const status = 'Next player: ' + this.state.currentPlayer;
-
 		return (
 			<div>
-				<div className="status">{status}</div>
 				<div className="board-row">
 					{this.renderSquare(0)}
 					{this.renderSquare(1)}
@@ -64,14 +47,28 @@ class Board extends React.Component {
 }
 
 class Game extends React.Component {
+	state={
+		squares: Array(9).fill(null),
+		currentPlayer: 'X'
+	}
+	handleClick(i) {
+		const squares = this.state.squares;
+		if(squares[i]!==null)
+			return null;
+		squares[i] = this.state.currentPlayer;
+		this.setState(prevState => ({
+			squares: squares,
+			currentPlayer: prevState.currentPlayer === 'X' ? 'O' : 'X'
+		}));
+	}
 	render() {
 		return (
 			<div className="game">
 				<div className="game-board">
-					<Board />
+					<Board squares={this.state.squares} currentPlayer={this.state.currentPlayer} handleClick={i => this.handleClick(i)}/>
 				</div>
 				<div className="game-info">
-					<div>{/* status */}</div>
+					<div> Next Player: {this.state.currentPlayer}</div>
 					<ol>{/* TODO */}</ol>
 				</div>
 			</div>
