@@ -6,16 +6,29 @@ import './index.css';
 class Square extends React.Component {
 	render() {
 		return (
-			<button className="square">
-				{/* TODO */}
+			<button id={this.props.index} className="square" onClick={this.props.handleClick}>
+				{this.props.value}
 			</button>
 		);
 	}
 }
 
 class Board extends React.Component {
+	state={
+		currentPlayer: 'X',
+		squaresValues: ['', '', '', '', '', '', '', '', '']
+	}
+	handleClick = (e) => {
+		const index = e.target.id;
+		const newSquaresValues = this.state.squaresValues;
+		newSquaresValues[index] = this.state.currentPlayer;
+		this.setState(prevState => ({
+			currentPlayer: prevState.currentPlayer==='X' ? 'O' : 'X',
+			squaresValues: newSquaresValues
+		}));
+	}
 	renderSquare(i) {
-		return <Square />;
+		return <Square index={i} value={this.state.squaresValues[i]} handleClick={this.handleClick}/>;
 	}
 
 	render() {
