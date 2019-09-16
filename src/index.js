@@ -17,7 +17,7 @@ class Board extends React.Component {
 	renderSquare(i) {
 		return (
 			<Square 
-				value={this.props.squares[i]} 
+				value={this.props.squares[i]}
 				onClick={() => this.props.handleClick(i)}
 			/>
 		);
@@ -48,11 +48,12 @@ class Board extends React.Component {
 
 class Game extends React.Component {
 	state={
-		squares: Array(9).fill(null),
 		currentPlayer: 'X',
+		history: [Array(9).fill(null)],
+		step: 0
 	}
 	calculateWinner() {
-		const squares = this.state.squares;
+		const squares = this.state.history[this.state.step];
 		const lines=[
 			[0, 1, 2],
 			[2, 3, 4],
@@ -71,24 +72,30 @@ class Game extends React.Component {
 		return null;
 	}
 	handleClick(i) {
-		const squares = this.state.squares;
+		const squares = this.state.history[this.state.step];
 		if(squares[i]!==null)
 			return null;
 		squares[i] = this.state.currentPlayer;
+		const history = this.state.history;
+		history[this.state.step + 1] = squares;
+		const stepUpdated = this.state.step + 1;
 		this.setState(prevState => ({
 			squares: squares,
-			currentPlayer: prevState.currentPlayer === 'X' ? 'O' : 'X'
+			currentPlayer: prevState.currentPlayer === 'X' ? 'O' : 'X',
+			step: stepUpdated,
+			history: history
 		}));
 	}
 	render() {
 		const winner = this.calculateWinner();
+		const squares = this.state.history[this.state.step];
 		const info = winner ?
 			<p>Winner : {winner}</p> :
 			<p>Next Player: {this.state.currentPlayer}</p>;
 		return (
 			<div className="game">
 				<div className="game-board">
-					<Board squares={this.state.squares} currentPlayer={this.state.currentPlayer} handleClick={i => this.handleClick(i)}/>
+					<Board squares={squares} currentPlayer={this.state.currentPlayer} handleClick={i => this.handleClick(i)}/>
 				</div>
 				<div className="game-info">
 					<div>{info}</div>
